@@ -1,6 +1,5 @@
 <template>
     <el-menu
-            default-active="2"
             class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose"
@@ -8,9 +7,10 @@
         <el-submenu index="1">
             <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>Baidu Account</span>
+                <span>百度账号管理</span>
             </template>
-            <el-menu-item index="1-1" route="/bind">Bind BDUSS</el-menu-item>
+            <el-menu-item index="1-1" route="/bind">绑定 BDUSS</el-menu-item>
+            <el-menu-item index="1-2" route="/forums">管理贴吧</el-menu-item>
         </el-submenu>
         <el-menu-item index="2" route="/">
             <i class="el-icon-menu"></i>

@@ -5,6 +5,7 @@
 - PHP 7+
 - MySQL
 - Apache or Nginx
+- NodeJS
 
 ## Architecture
 

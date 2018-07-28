@@ -70,7 +70,8 @@
             return {
                 bduss: "",
                 bdusses: [],
-                csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                loading: false
             }
         },
         created: function () {
@@ -83,10 +84,12 @@
                 });
             },
             bind: function (event) {
+                this.loading = true
                 this.$http.post('/api/v1/bduss/bind', {
                     bduss: this.bduss,
                     _token: this.csrf
                 }).then(function (res) {
+                    this.loading = false
                     if (res.body.success === false) {
                         this.$alert(res.body.err_msg, '绑定失败', {
                             confirmButtonText: '好',

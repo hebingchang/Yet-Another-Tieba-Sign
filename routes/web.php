@@ -28,5 +28,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/api/v1'], function () {
     Route::post('/bduss/bind', "ApiController@ApiBindBDUSS");
     Route::get('/bduss/get', "ApiController@ApiGetBDUSS");
     Route::post('/bduss/delete', "ApiController@ApiDeleteBDUSS");
-
+    Route::post('/forums/get', "ApiController@ApiGetForums");
+    Route::post('/forums/update', "ApiController@ApiUpdateForums");
 });
