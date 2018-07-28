@@ -20,6 +20,7 @@
 - Modify `.env` to configure the database
 - `php artisan migrate`
 - `php artisan serve` and `npm run watch`
+- Add a test user: `php artisan user:add {username} {password}`
 - Start developing!
 
 ## License
