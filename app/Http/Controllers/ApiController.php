@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\BaiduAccount;
+use App\Jobs\SignTieba;
+use App\SignRecord;
 use App\UserForum;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Imtigger\LaravelJobStatus\JobStatus;
 
 class ApiController extends Controller
 {
@@ -147,5 +151,25 @@ class ApiController extends Controller
                 "err_msg" => "内部错误"
             ]);
         }
+    }
+
+    public function ApiBDUSSSign($bduss_id)
+    {
+        $job = new SignTieba($bduss_id);
+        $this->dispatch($job);
+        $jobStatusId = $job->getJobStatusId();
+
+        return Response::json([
+            "success" => true,
+            "job_id" => $jobStatusId
+        ]);
+    }
+
+    public function ApiJobStatus($job_id)
+    {
+        return Response::json([
+            "success" => true,
+            "data" => JobStatus::find($job_id)
+        ]);
     }
 }

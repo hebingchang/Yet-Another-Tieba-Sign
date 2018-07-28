@@ -64256,6 +64256,16 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "el-main",
+    {
+      directives: [
+        {
+          name: "loading",
+          rawName: "v-loading",
+          value: _vm.loading,
+          expression: "loading"
+        }
+      ]
+    },
     [
       _c("h1", { staticClass: "page-title" }, [_vm._v("绑定 BDUSS")]),
       _vm._v(" "),
@@ -64493,7 +64503,7 @@ exports = module.exports = __webpack_require__(24)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -64504,14 +64514,6 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -64559,7 +64561,7 @@ var render = function() {
         { attrs: { index: "1" } },
         [
           _c("template", { slot: "title" }, [
-            _c("i", { staticClass: "el-icon-location" }),
+            _c("i", { staticClass: "el-icon-menu" }),
             _vm._v(" "),
             _c("span", [_vm._v("百度账号管理")])
           ]),
@@ -64576,26 +64578,10 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("el-menu-item", { attrs: { index: "2", route: "/" } }, [
-        _c("i", { staticClass: "el-icon-menu" }),
+        _c("i", { staticClass: "el-icon-edit-outline" }),
         _vm._v(" "),
         _c("span", { attrs: { slot: "title" }, slot: "title" }, [
           _vm._v("导航二")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("el-menu-item", { attrs: { index: "3", route: "/bind" } }, [
-        _c("i", { staticClass: "el-icon-document" }),
-        _vm._v(" "),
-        _c("span", { attrs: { slot: "title" }, slot: "title" }, [
-          _vm._v("导航三")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("el-menu-item", { attrs: { index: "4" } }, [
-        _c("i", { staticClass: "el-icon-setting" }),
-        _vm._v(" "),
-        _c("span", { attrs: { slot: "title" }, slot: "title" }, [
-          _vm._v("导航四")
         ])
       ])
     ],

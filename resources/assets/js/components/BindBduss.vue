@@ -1,5 +1,5 @@
 <template>
-    <el-main>
+    <el-main v-loading="loading">
         <h1 class="page-title">绑定 BDUSS</h1>
 
         <el-card class="box-card">

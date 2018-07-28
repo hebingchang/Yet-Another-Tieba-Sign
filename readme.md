@@ -6,6 +6,7 @@
 - MySQL
 - Apache or Nginx
 - NodeJS
+- Redis
 
 ## Architecture
 
@@ -21,6 +22,7 @@
 - `php artisan migrate`
 - `php artisan serve` and `npm run watch`
 - Add a test user: `php artisan user:add {username} {password}`
+- Use `php artisan queue:listen` to start signing job
 - Start developing!
 
 ## License
