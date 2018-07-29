@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaiduAccount;
 use App\Jobs\SignTieba;
+use App\SignJob;
 use App\SignRecord;
 use App\UserForum;
 use Carbon\Carbon;
@@ -132,7 +133,7 @@ class ApiController extends Controller
                 ];
             }
             foreach ($forums as $forum) {
-                $forum_record = UserForum::firstOrCreate(["bduss_id" => $request->bduss_id, "forum_id" => $forum->id]);
+                $forum_record = UserForum::firstOrCreate(["bduss_id" => $bduss_id, "forum_id" => $forum->id]);
                 $forum_record->forum_name = $forum->name;
                 $forum_record->level_id = $forum->level_id;
                 $forum_record->level_name = $forum->level_name;
@@ -141,7 +142,7 @@ class ApiController extends Controller
                 $forum_record->save();
             }
 
-            $user_forums = UserForum::where("bduss_id", $request->bduss_id)->get();
+            $user_forums = UserForum::where("bduss_id", $bduss_id)->get();
             foreach ($user_forums as $user_forum) {
                 $actual_forum = array_filter(
                     $forums,
@@ -176,6 +177,11 @@ class ApiController extends Controller
         $job = new SignTieba($bduss_id);
         $this->dispatch($job);
         $jobStatusId = $job->getJobStatusId();
+        $sign_job = new SignJob([
+            "bduss_id" => $bduss_id,
+            "job_id" => $jobStatusId,
+        ]);
+        $sign_job->save();
 
         return Response::json([
             "success" => true,
@@ -196,6 +202,10 @@ class ApiController extends Controller
         $bduss_id = $request->bduss_id;
         $date = $request->date;
 
+        if (!isset($date)) {
+            $date = Carbon::now()->toDateString();
+        }
+
         $forums = UserForum::where('bduss_id', $request->bduss_id)->get();
         $records = [];
 
@@ -215,5 +225,40 @@ class ApiController extends Controller
             "data" => $forums
         ]);
 
+    }
+
+    public function refreshJob($job)
+    {
+        $job_id = $job->job_id;
+        $job_status = JobStatus::find($job_id);
+        $job->status = $job_status->status;
+        $job->save();
+    }
+
+    public function ApiListJobs($bduss_id)
+    {
+        $jobs = SignJob::where("bduss_id", $bduss_id)->get();
+        foreach ($jobs as $job) {
+            if ($job->status == "queued" || $job->status == "executing") {
+                $this->refreshJob($job);
+            }
+        }
+        return Response::json([
+            "success" => true,
+            "data" => $jobs
+        ]);
+    }
+
+    public function ApiListOngoingJobs($bduss_id)
+    {
+        $jobs = SignJob::where("bduss_id", $bduss_id)->where("status", "executing")->orWhere("status", "queued")->get();
+        foreach ($jobs as $job) {
+            $this->refreshJob($job);
+        }
+        $jobs = SignJob::where("bduss_id", $bduss_id)->where("status", "executing")->orWhere("status", "queued")->get();
+        return Response::json([
+            "success" => true,
+            "data" => $jobs
+        ]);
     }
 }

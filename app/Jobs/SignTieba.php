@@ -56,6 +56,11 @@ class SignTieba implements ShouldQueue
                     $has_signed = true;
                     $sign_succ_count++;
                 } else {
+                    $record = SignRecord::whereDate('created_at', Carbon::today())->firstOrNew(["forum_id" => $forum->id]);
+                    $record->forum_id = $forum->id;
+                    $record->error_msg = $result->error_msg;
+                    $record->has_signed = false;
+                    $record->save();
                     $sign_fail_count++;
                 }
 
@@ -85,7 +90,7 @@ class SignTieba implements ShouldQueue
 
             $this->setProgressNow($index + 1);
 
-            sleep(1);
+            sleep(env("SIGN_SLEEP_TIME"));
 
         }
 

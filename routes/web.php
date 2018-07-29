@@ -35,4 +35,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/api/v1'], function () {
     Route::get('/bduss/{bduss_id}/sign', "ApiController@ApiBDUSSSign");
 
     Route::get('/queue/status/{job_id}', "ApiController@ApiJobStatus");
+    Route::get('/queue/list/{bduss_id}', "ApiController@ApiListJobs");
+    Route::get('/queue/list/{bduss_id}/ongoing', "ApiController@ApiListOngoingJobs");
+
 });

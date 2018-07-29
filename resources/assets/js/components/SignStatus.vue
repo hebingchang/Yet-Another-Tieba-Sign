@@ -30,10 +30,14 @@
                 </el-form>
 
                 <el-form ref="form">
-                    <el-form-item v-if="bduss_id != null">
+                    <el-form-item v-if="bduss_id != null && !signing">
                         <el-button type="primary" @click="sign">立即签到</el-button>
                     </el-form-item>
+                    <el-form-item :label="signing_status" v-if="signing">
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="progress"></el-progress>
+                    </el-form-item>
                 </el-form>
+
 
                 <el-table
                         :data="records"
@@ -67,7 +71,7 @@
                             label="签到情况"
                             sortable>
                         <template slot-scope="scope">
-                            {{ scope.row.sign_history.has_signed ? "已签到" : "未签到" }}
+                            {{ scope.row.sign_history.has_signed ? "已签到" : (scope.row.sign_history.error_msg ? "签到失败 ("+scope.row.sign_history.error_msg+")" : "未签到") }}
                         </template>
                     </el-table-column>
 
@@ -115,6 +119,10 @@
                 records: [],
                 show_sign: false,
                 signing: false,
+                progress: 0,
+                job_id: null,
+                refresh_job: null,
+                signing_status: "",
             }
         },
         created: function () {
@@ -124,6 +132,7 @@
         },
         methods: {
             refresh: function () {
+                this.checkSigning()
                 if (this.bduss_id !== null && this.date !== null) {
                     this.show_sign = true
                     this.$http.get('/api/v1/sign/record/' + this.bduss_id + '/' + this.date).then(function (res) {
@@ -133,7 +142,45 @@
             },
             sign: function () {
                 this.$http.get('/api/v1/bduss/' + this.bduss_id + '/sign').then(function (res) {
-                    this.records = res.body.data
+                    if (res.body.success === true) {
+                        this.checkSigning()
+                    }
+                });
+            },
+            checkSigning: function () {
+                this.$http.get('/api/v1/queue/list/' + this.bduss_id + '/ongoing').then(function (res) {
+                    if (res.body.data.length !== 0) {
+                        this.signing = true
+                        this.job_id = res.body.data[0].job_id
+                        this.refresh_job = setInterval(this.refreshSigning, 1000)
+                    } else {
+                        this.signing = false
+                    }
+                });
+            },
+            refreshSigning: function () {
+                this.$http.get('/api/v1/queue/status/' + this.job_id).then(function (res) {
+                    if (res.body.data.status === "queued" || res.body.data.status === "executing") {
+                        if (res.body.data.status === "queued") {
+                            this.signing_status = "签到任务队列中"
+                            this.progress = 0
+                        } else if (res.body.data.status === "executing") {
+                            this.signing_status = "签到任务执行中"
+                            this.progress = Math.round(res.body.data.progress_now / res.body.data.progress_max * 100 * 100) / 100
+                        }
+                        this.signing = true
+                    } else {
+                        this.signing = false
+
+                        var today = new Date();
+                        var dd = today.getDate();
+                        var mm = today.getMonth()+1; //January is 0!
+                        var yyyy = today.getFullYear();
+
+                        this.date = yyyy + "-" + mm + "-" + dd
+                        this.refresh()
+                        clearInterval(this.refresh_job)
+                    }
                 });
             }
         }

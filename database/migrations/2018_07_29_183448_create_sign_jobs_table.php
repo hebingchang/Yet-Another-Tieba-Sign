@@ -17,7 +17,7 @@ class CreateSignJobsTable extends Migration
             $table->increments('id');
             $table->integer('bduss_id');
             $table->integer('job_id');
-            $table->integer('has_finished')->default(false);
+            $table->string('status')->default('queued');
             $table->timestamps();
         });
     }
