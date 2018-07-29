@@ -22,7 +22,7 @@
 - `php artisan migrate`
 - `php artisan serve` and `npm run watch`
 - Add a test user: `php artisan user:add {username} {password}`
-- Use `php artisan queue:listen` to start signing job
+- Use `php artisan queue:listen --timeout=60000` to start signing job (consider that the default timeout 60s is not enough to sign all tiebas)
 - Start developing!
 
 ## License
