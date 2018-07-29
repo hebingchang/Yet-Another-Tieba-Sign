@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/api/v1'], function () {
     Route::post('/bduss/delete', "ApiController@ApiDeleteBDUSS");
     Route::post('/forums/get', "ApiController@ApiGetForums");
     Route::post('/forums/update', "ApiController@ApiUpdateForums");
+    Route::get('/sign/record/{bduss_id}/{date}', "ApiController@ApiSignRecord");
 
     Route::get('/bduss/{bduss_id}/sign', "ApiController@ApiBDUSSSign");
 

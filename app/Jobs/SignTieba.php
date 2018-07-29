@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\BaiduAccount;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\TiebaApiController;
 use App\SignRecord;
 use App\UserForum;
@@ -40,7 +41,7 @@ class SignTieba implements ShouldQueue
         $bduss_id = $this->bduss_id;
         $forums = UserForum::where("bduss_id", $bduss_id)->get();
         $baidu_api = new TiebaApiController(BaiduAccount::where("id", $bduss_id)->first()->bduss);
-        $this->setProgressMax($forums->count());
+        $this->setProgressMax($forums->count() + 1);
 
         $sign_succ_count = 0;
         $sign_fail_count = 0;
@@ -87,6 +88,11 @@ class SignTieba implements ShouldQueue
             sleep(1);
 
         }
+
+        $this->setProgressNow($forums->count() + 1);
+
+        $api = new ApiController();
+        $api->updateForums($bduss_id);
 
         $this->setOutput(['success' => $sign_succ_count, 'failed' => $sign_fail_count]);
 

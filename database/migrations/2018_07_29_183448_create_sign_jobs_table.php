@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserForumsTable extends Migration
+class CreateSignJobsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateUserForumsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_forums', function (Blueprint $table) {
+        Schema::create('sign_jobs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('bduss_id');
-            $table->integer('forum_id');
-            $table->string('forum_name')->default("");
-            $table->integer('level_id')->default(0);
-            $table->string('level_name')->default("");
-            $table->integer('cur_score')->default(0);
+            $table->integer('job_id');
+            $table->integer('has_finished')->default(false);
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ class CreateUserForumsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_forums');
+        Schema::dropIfExists('sign_jobs');
     }
 }

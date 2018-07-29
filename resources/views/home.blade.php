@@ -33,7 +33,7 @@
             <el-row type="flex" class="row-bg" justify="space-between">
                 <el-col :span="6">
                     <div class="app-title">
-                        yats
+                        Tieba Sign
                     </div>
                 </el-col>
                 <el-col :span="6">

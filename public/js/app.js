@@ -63839,11 +63839,14 @@ if (inBrowser && window.Vue) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BindBduss_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_BindBduss_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_UserForums__ = __webpack_require__(184);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_UserForums___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_UserForums__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_SignStatus__ = __webpack_require__(189);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_SignStatus___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_SignStatus__);
 
 
 
 
-var routes = [{ path: '/', component: __WEBPACK_IMPORTED_MODULE_0__components_HomePage_vue___default.a }, { path: '/bind', component: __WEBPACK_IMPORTED_MODULE_1__components_BindBduss_vue___default.a }, { path: '/forums', component: __WEBPACK_IMPORTED_MODULE_2__components_UserForums___default.a }];
+
+var routes = [{ path: '/', component: __WEBPACK_IMPORTED_MODULE_0__components_HomePage_vue___default.a }, { path: '/bind', component: __WEBPACK_IMPORTED_MODULE_1__components_BindBduss_vue___default.a }, { path: '/forums', component: __WEBPACK_IMPORTED_MODULE_2__components_UserForums___default.a }, { path: '/sign', component: __WEBPACK_IMPORTED_MODULE_3__components_SignStatus___default.a }];
 
 /* harmony default export */ __webpack_exports__["a"] = (routes);
 
@@ -64503,7 +64506,7 @@ exports = module.exports = __webpack_require__(24)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -64514,6 +64517,9 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
 //
 //
 //
@@ -64577,13 +64583,22 @@ var render = function() {
         2
       ),
       _vm._v(" "),
-      _c("el-menu-item", { attrs: { index: "2", route: "/" } }, [
-        _c("i", { staticClass: "el-icon-edit-outline" }),
-        _vm._v(" "),
-        _c("span", { attrs: { slot: "title" }, slot: "title" }, [
-          _vm._v("导航二")
-        ])
-      ])
+      _c(
+        "el-submenu",
+        { attrs: { index: "2" } },
+        [
+          _c("template", { slot: "title" }, [
+            _c("i", { staticClass: "el-icon-edit-outline" }),
+            _vm._v(" "),
+            _c("span", [_vm._v("签到管理")])
+          ]),
+          _vm._v(" "),
+          _c("el-menu-item", { attrs: { index: "2-1", route: "/sign" } }, [
+            _vm._v("签到记录")
+          ])
+        ],
+        2
+      )
     ],
     1
   )
@@ -64783,7 +64798,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "UserForums",
@@ -64820,6 +64834,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 vm.loading = false;
                 if (res.body.success === true) {
                     this.$message('贴吧更新成功');
+                    this.refresh();
                 } else {
                     this.$alert(res.body.err_msg, '更新失败', {
                         confirmButtonText: '好'
@@ -64913,29 +64928,499 @@ var render = function() {
                       ],
                       1
                     )
-                  : _vm._e(),
+                  : _vm._e()
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "el-table",
+              {
+                staticStyle: { width: "100%" },
+                attrs: {
+                  data: _vm.forums,
+                  height: "600px",
+                  "default-sort": { prop: "created_at", order: "descending" }
+                }
+              },
+              [
+                _c("el-table-column", {
+                  attrs: {
+                    label: "贴吧名称",
+                    sortable: "",
+                    fixed: "",
+                    width: "200px"
+                  },
+                  scopedSlots: _vm._u([
+                    {
+                      key: "default",
+                      fn: function(scope) {
+                        return [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "el-button el-button--text",
+                              staticStyle: { "text-decoration": "none" },
+                              attrs: {
+                                href:
+                                  "http://tieba.baidu.com/f?kw=" +
+                                  scope.row.forum_name,
+                                target: "_blank"
+                              }
+                            },
+                            [_c("span", [_vm._v(_vm._s(scope.row.forum_name))])]
+                          )
+                        ]
+                      }
+                    }
+                  ])
+                }),
+                _vm._v(" "),
+                _c("el-table-column", {
+                  attrs: {
+                    prop: "forum_id",
+                    label: "贴吧ID",
+                    sortable: "",
+                    width: "150px"
+                  }
+                }),
+                _vm._v(" "),
+                _c("el-table-column", {
+                  attrs: {
+                    prop: "level_id",
+                    label: "当前等级",
+                    sortable: "",
+                    width: "150px"
+                  }
+                }),
+                _vm._v(" "),
+                _c("el-table-column", {
+                  attrs: {
+                    prop: "level_name",
+                    label: "等级名称",
+                    sortable: "",
+                    width: "100px"
+                  }
+                }),
+                _vm._v(" "),
+                _c("el-table-column", {
+                  attrs: {
+                    prop: "cur_score",
+                    label: "当前积分",
+                    sortable: "",
+                    width: "100px"
+                  }
+                }),
+                _vm._v(" "),
+                _c("el-table-column", {
+                  attrs: {
+                    prop: "created_at",
+                    label: "更新时间",
+                    sortable: "",
+                    width: "200px"
+                  }
+                })
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ])
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-loader/node_modules/vue-hot-reload-api")      .rerender("data-v-51ddbbd8", module.exports)
+  }
+}
+
+/***/ }),
+/* 189 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(190)
+}
+var normalizeComponent = __webpack_require__(47)
+/* script */
+var __vue_script__ = __webpack_require__(192)
+/* template */
+var __vue_template__ = __webpack_require__(193)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-843573f4"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/SignStatus.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-843573f4", Component.options)
+  } else {
+    hotAPI.reload("data-v-843573f4", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 190 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(191);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(46)("7732c03e", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/_css-loader@0.28.11@css-loader/index.js!../../../../node_modules/_vue-loader@13.7.2@vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-843573f4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/_vue-loader@13.7.2@vue-loader/lib/selector.js?type=styles&index=0!./SignStatus.vue", function() {
+     var newContent = require("!!../../../../node_modules/_css-loader@0.28.11@css-loader/index.js!../../../../node_modules/_vue-loader@13.7.2@vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-843573f4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/_vue-loader@13.7.2@vue-loader/lib/selector.js?type=styles&index=0!./SignStatus.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 191 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(24)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 192 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "SignStatus",
+    data: function data() {
+        return {
+            pickerOptions1: {
+                disabledDate: function disabledDate(time) {
+                    return time.getTime() > Date.now();
+                },
+
+                shortcuts: [{
+                    text: '今天',
+                    onClick: function onClick(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick: function onClick(picker) {
+                        var date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick: function onClick(picker) {
+                        var date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+            date: null,
+            bduss_id: null,
+            bdusses: [],
+            records: [],
+            show_sign: false,
+            signing: false
+        };
+    },
+    created: function created() {
+        this.$http.get('/api/v1/bduss/get').then(function (res) {
+            this.bdusses = res.body.data;
+        });
+    },
+    methods: {
+        refresh: function refresh() {
+            if (this.bduss_id !== null && this.date !== null) {
+                this.show_sign = true;
+                this.$http.get('/api/v1/sign/record/' + this.bduss_id + '/' + this.date).then(function (res) {
+                    this.records = res.body.data;
+                });
+            }
+        },
+        sign: function sign() {
+            this.$http.get('/api/v1/bduss/' + this.bduss_id + '/sign').then(function (res) {
+                this.records = res.body.data;
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 193 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "el-main",
+    {
+      directives: [
+        {
+          name: "loading",
+          rawName: "v-loading",
+          value: _vm.loading,
+          expression: "loading"
+        }
+      ]
+    },
+    [
+      _c("h1", { staticClass: "page-title" }, [_vm._v("签到状态")]),
+      _vm._v(" "),
+      _c("el-card", { staticClass: "box-card" }, [
+        _c(
+          "div",
+          {
+            staticClass: "clearfix",
+            attrs: { slot: "header" },
+            slot: "header"
+          },
+          [_c("span", [_vm._v("签到记录")])]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "text item" },
+          [
+            _c(
+              "el-form",
+              {
+                ref: "form",
+                attrs: { inline: true, model: _vm.form, "label-width": "80px" }
+              },
+              [
+                _c(
+                  "el-form-item",
+                  { attrs: { label: "百度账号" } },
+                  [
+                    _c(
+                      "el-select",
+                      {
+                        attrs: { placeholder: "请选择账户" },
+                        on: { change: _vm.refresh },
+                        model: {
+                          value: _vm.bduss_id,
+                          callback: function($$v) {
+                            _vm.bduss_id = $$v
+                          },
+                          expression: "bduss_id"
+                        }
+                      },
+                      _vm._l(_vm.bdusses, function(item) {
+                        return _c("el-option", {
+                          key: item.id,
+                          attrs: { label: item.baidu_name, value: item.id }
+                        })
+                      })
+                    )
+                  ],
+                  1
+                ),
                 _vm._v(" "),
                 _c(
+                  "el-form-item",
+                  { attrs: { label: "日期" } },
+                  [
+                    _c("el-date-picker", {
+                      attrs: {
+                        "value-format": "yyyy-MM-dd",
+                        align: "right",
+                        type: "date",
+                        placeholder: "选择日期",
+                        "picker-options": _vm.pickerOptions1
+                      },
+                      on: { change: _vm.refresh },
+                      model: {
+                        value: _vm.date,
+                        callback: function($$v) {
+                          _vm.date = $$v
+                        },
+                        expression: "date"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "el-form",
+              { ref: "form" },
+              [
+                _vm.bduss_id != null
+                  ? _c(
+                      "el-form-item",
+                      [
+                        _c(
+                          "el-button",
+                          {
+                            attrs: { type: "primary" },
+                            on: { click: _vm.sign }
+                          },
+                          [_vm._v("立即签到")]
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e()
+              ],
+              1
+            ),
+            _vm._v(" "),
+            !_vm.signing
+              ? _c(
                   "el-table",
                   {
                     staticStyle: { width: "100%" },
                     attrs: {
-                      data: _vm.forums,
-                      height: "600px",
+                      data: _vm.records,
                       "default-sort": {
-                        prop: "created_at",
+                        prop: "sign_history",
                         order: "descending"
                       }
                     }
                   },
                   [
                     _c("el-table-column", {
-                      attrs: {
-                        label: "贴吧名称",
-                        sortable: "",
-                        fixed: "",
-                        width: "200px"
-                      },
+                      attrs: { label: "贴吧名称", sortable: "", fixed: "" },
                       scopedSlots: _vm._u([
                         {
                           key: "default",
@@ -64945,6 +65430,7 @@ var render = function() {
                                 "a",
                                 {
                                   staticClass: "el-button el-button--text",
+                                  staticStyle: { "text-decoration": "none" },
                                   attrs: {
                                     href:
                                       "http://tieba.baidu.com/f?kw=" +
@@ -64965,55 +65451,42 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("el-table-column", {
-                      attrs: {
-                        prop: "forum_id",
-                        label: "贴吧ID",
-                        sortable: "",
-                        width: "150px"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("el-table-column", {
-                      attrs: {
-                        prop: "level_id",
-                        label: "当前等级",
-                        sortable: "",
-                        width: "150px"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("el-table-column", {
-                      attrs: {
-                        prop: "level_name",
-                        label: "等级名称",
-                        sortable: "",
-                        width: "100px"
-                      }
+                      attrs: { prop: "level_name", label: "等级", sortable: "" }
                     }),
                     _vm._v(" "),
                     _c("el-table-column", {
                       attrs: {
                         prop: "cur_score",
                         label: "当前积分",
-                        sortable: "",
-                        width: "100px"
+                        sortable: ""
                       }
                     }),
                     _vm._v(" "),
                     _c("el-table-column", {
-                      attrs: {
-                        prop: "created_at",
-                        label: "更新时间",
-                        sortable: "",
-                        width: "200px"
-                      }
+                      attrs: { label: "签到情况", sortable: "" },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "default",
+                          fn: function(scope) {
+                            return [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(
+                                    scope.row.sign_history.has_signed
+                                      ? "已签到"
+                                      : "未签到"
+                                  ) +
+                                  "\n                    "
+                              )
+                            ]
+                          }
+                        }
+                      ])
                     })
                   ],
                   1
                 )
-              ],
-              1
-            )
+              : _vm._e()
           ],
           1
         )
@@ -65028,7 +65501,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-loader/node_modules/vue-hot-reload-api")      .rerender("data-v-51ddbbd8", module.exports)
+    require("vue-loader/node_modules/vue-hot-reload-api")      .rerender("data-v-843573f4", module.exports)
   }
 }
 

@@ -17,64 +17,63 @@
                     <el-form-item v-if="bduss_id != null">
                         <el-button @click="update">全部更新</el-button>
                     </el-form-item>
-
-                    <el-table
-                            :data="forums"
-                            style="width: 100%"
-                            height="600px"
-                            :default-sort = "{prop: 'created_at', order: 'descending'}"
-                    >
-
-                        <el-table-column
-                                label="贴吧名称"
-                                sortable
-                                fixed
-                                width="200px">
-                            <template slot-scope="scope">
-                                <a :href="'http://tieba.baidu.com/f?kw=' + scope.row.forum_name" class="el-button el-button--text" target="_blank"><span>{{ scope.row.forum_name }}</span></a>
-
-                            </template>
-                        </el-table-column>
-
-                        <el-table-column
-                                prop="forum_id"
-                                label="贴吧ID"
-                                sortable
-                                width="150px">
-                        </el-table-column>
-
-                        <el-table-column
-                                prop="level_id"
-                                label="当前等级"
-                                sortable
-                                width="150px">
-                        </el-table-column>
-
-                        <el-table-column
-                                prop="level_name"
-                                label="等级名称"
-                                sortable
-                                width="100px">
-                        </el-table-column>
-
-                        <el-table-column
-                                prop="cur_score"
-                                label="当前积分"
-                                sortable
-                                width="100px">
-                        </el-table-column>
-
-                        <el-table-column
-                                prop="created_at"
-                                label="更新时间"
-                                sortable
-                                width="200px">
-                        </el-table-column>
-
-                    </el-table>
-
-
                 </el-form>
+
+                <el-table
+                        :data="forums"
+                        style="width: 100%"
+                        height="600px"
+                        :default-sort = "{prop: 'created_at', order: 'descending'}"
+                >
+
+                    <el-table-column
+                            label="贴吧名称"
+                            sortable
+                            fixed
+                            width="200px">
+                        <template slot-scope="scope">
+                            <a :href="'http://tieba.baidu.com/f?kw=' + scope.row.forum_name" class="el-button el-button--text" style="text-decoration: none;" target="_blank"><span>{{ scope.row.forum_name }}</span></a>
+
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="forum_id"
+                            label="贴吧ID"
+                            sortable
+                            width="150px">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="level_id"
+                            label="当前等级"
+                            sortable
+                            width="150px">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="level_name"
+                            label="等级名称"
+                            sortable
+                            width="100px">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="cur_score"
+                            label="当前积分"
+                            sortable
+                            width="100px">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="created_at"
+                            label="更新时间"
+                            sortable
+                            width="200px">
+                    </el-table-column>
+
+                </el-table>
+
             </div>
         </el-card>
     </el-main>
@@ -116,6 +115,7 @@
                     vm.loading = false
                     if (res.body.success === true) {
                         this.$message('贴吧更新成功');
+                        this.refresh()
                     } else {
                         this.$alert(res.body.err_msg, '更新失败', {
                             confirmButtonText: '好',

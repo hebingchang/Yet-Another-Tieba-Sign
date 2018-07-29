@@ -118,39 +118,57 @@ class ApiController extends Controller
         ]);
     }
 
-    public function ApiUpdateForums(Request $request)
+    public function updateForums($bduss_id)
     {
-        $bduss = BaiduAccount::where("id", $request->bduss_id)->first()->bduss;
+        $bduss = BaiduAccount::where("id", $bduss_id)->first()->bduss;
+
         if (isset($bduss)) {
             $baidu_api = new TiebaApiController($bduss);
-            UserForum::where('bduss_id', $request->bduss_id)->delete();
             $forums = $baidu_api->getFavForums();
             if (!isset($forums)) {
-                return Response::json([
+                return [
                     "success" => false,
                     "err_msg" => "BDUSS 已失效"
-                ]);
+                ];
             }
             foreach ($forums as $forum) {
-                $forum = new UserForum([
-                    "bduss_id" => $request->bduss_id,
-                    "forum_id" => $forum->id,
-                    "forum_name" => $forum->name,
-                    "level_id" => $forum->level_id,
-                    "level_name" => $forum->level_name,
-                    "cur_score" => $forum->cur_score,
-                ]);
-                $forum->save();
+                $forum_record = UserForum::firstOrCreate(["bduss_id" => $request->bduss_id, "forum_id" => $forum->id]);
+                $forum_record->forum_name = $forum->name;
+                $forum_record->level_id = $forum->level_id;
+                $forum_record->level_name = $forum->level_name;
+                $forum_record->cur_score = $forum->cur_score;
+
+                $forum_record->save();
             }
-            return Response::json([
+
+            $user_forums = UserForum::where("bduss_id", $request->bduss_id)->get();
+            foreach ($user_forums as $user_forum) {
+                $actual_forum = array_filter(
+                    $forums,
+                    function ($e) use ($user_forum) {
+                        return $e->id == $user_forum->forum_id;
+                    }
+                );
+
+                if (sizeof($actual_forum) == 0) {
+                    $user_forum->delete();
+                }
+
+            }
+            return [
                 "success" => true,
-            ]);
+            ];
         } else {
-            return Response::json([
+            return [
                 "success" => false,
                 "err_msg" => "内部错误"
-            ]);
+            ];
         }
+    }
+
+    public function ApiUpdateForums(Request $request)
+    {
+        return Response::json($this->updateForums($request->bduss_id));
     }
 
     public function ApiBDUSSSign($bduss_id)
@@ -171,5 +189,31 @@ class ApiController extends Controller
             "success" => true,
             "data" => JobStatus::find($job_id)
         ]);
+    }
+
+    public function ApiSignRecord(Request $request)
+    {
+        $bduss_id = $request->bduss_id;
+        $date = $request->date;
+
+        $forums = UserForum::where('bduss_id', $request->bduss_id)->get();
+        $records = [];
+
+        // TODO: Implement the function with Eloquent
+        foreach ($forums as $forum) {
+            $forum->sign_history = array();
+            foreach ($forum->sign_status as $record) {
+                if (Carbon::parse($record->created_at)->toDateString() == Carbon::parse($date)->toDateString()) {
+                    $forum->sign_history = $record;
+                }
+            }
+            unset($forum->sign_status);
+        }
+
+        return Response::json([
+            "success" => true,
+            "data" => $forums
+        ]);
+
     }
 }
