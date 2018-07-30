@@ -6,10 +6,12 @@ use App\BaiduAccount;
 use App\Jobs\SignTieba;
 use App\SignJob;
 use App\SignRecord;
+use App\User;
 use App\UserForum;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Imtigger\LaravelJobStatus\JobStatus;
 use Lcobucci\JWT\Parser;
@@ -274,6 +276,39 @@ class ApiController extends Controller
             'message' => 'You are Logged out.',
         ];
         return response()->json($json, '200');
+    }
+
+    public function ApiChangePassword(Request $request)
+    {
+        $old_password = $request->old_password;
+        $new_password = $request->new_password;
+        $confirm_password = $request->confirm_password;
+
+        $user = User::find(Auth::user()->id);
+
+        if (!Hash::check($old_password, $user->password)) {
+            return Response::json([
+                "success" => false,
+                "err_msg" => "原密码不正确\n"
+            ]);
+        }
+
+        if ($new_password != $confirm_password)
+        {
+            return Response::json([
+                "success" => false,
+                "err_msg" => "新密码不匹配"
+            ]);
+        }
+
+        $user->password = Hash::make($new_password);
+        $user->save();
+
+        return Response::json([
+            "success" => true,
+        ]);
+
+
     }
 
 }

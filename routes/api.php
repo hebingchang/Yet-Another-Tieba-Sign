@@ -36,4 +36,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/queue/list/{bduss_id}', "ApiController@ApiListJobs");
     Route::get('/queue/list/{bduss_id}/ongoing', "ApiController@ApiListOngoingJobs");
 
+    Route::post('/password/update', "ApiController@ApiChangePassword");
+
 });
