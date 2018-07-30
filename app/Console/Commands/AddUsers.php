@@ -44,6 +44,7 @@ class AddUsers extends Command
         $user = new User([
             "name" => $username,
             "email" => $username . "@boar.tech",
+            "roles" => "admin",
             "password" => Hash::make($password),
         ]);
         $user->save();

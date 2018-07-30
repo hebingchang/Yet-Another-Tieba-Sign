@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Imtigger\LaravelJobStatus\JobStatus;
+use Lcobucci\JWT\Parser;
 
 class ApiController extends Controller
 {
@@ -87,6 +88,7 @@ class ApiController extends Controller
 
         return Response::json([
             "success" => true,
+            "user" => Auth::user(),
             "data" => $baidu_accounts
         ]);
     }
@@ -261,4 +263,17 @@ class ApiController extends Controller
             "data" => $jobs
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        $json = [
+            'success' => true,
+            'code' => 200,
+            'message' => 'You are Logged out.',
+        ];
+        return response()->json($json, '200');
+    }
+
 }

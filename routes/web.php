@@ -39,3 +39,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/api/v1'], function () {
     Route::get('/queue/list/{bduss_id}/ongoing', "ApiController@ApiListOngoingJobs");
 
 });
+
+Route::get('/avatar/{username}', function () {
+    return \Intervention\Image\Facades\Image::make(storage_path('app/public/user.png'))->response();
+});
