@@ -20,9 +20,14 @@
 - Run `composer install`
 - Modify `.env` to configure the database
 - `php artisan migrate`
-- `php artisan serve`
 - Add a test user: `php artisan user:add {username} {password}`
-- Use `php artisan queue:listen --timeout=60000` to start signing job (consider that the default timeout 60s is not enough to sign all tiebas)
+- Configure passport: `php artisan passport:install`
+- Configure a password grant client: `php artisan passport:client --password`
+
+    Remember the `Client ID` and `Client Secret`. It's necessary in frontend configuration.
+
+- Run the develop server: `php artisan serve`
+- Run a new terminal and use `php artisan queue:listen --timeout=60000` to start signing job (consider that the default timeout 60s is not enough to sign all tiebas)
 - Reference to according guide to build the frontend
 - Start developing!
 
