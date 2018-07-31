@@ -16,28 +16,12 @@ Route::get('/', function () {
 
 Route::get('/login', ['as' => 'login', 'uses' => 'ApiController@showLogin']);
 Route::post('/login', "ApiController@login");
+Route::post('/register', "ApiController@register");
+Route::post('/invitation_code/verify', "ApiController@ApiInvCodeVerify");
+
 
 Route::middleware(['auth'])->get('/home', function () {
     return view('home');
-});
-
-Route::group(['middleware' => 'auth', 'prefix' => '/api/v1'], function () {
-    Route::get('/user', function (Request $request) {
-        return \Illuminate\Support\Facades\Auth::user();
-    });
-    Route::post('/bduss/bind', "ApiController@ApiBindBDUSS");
-    Route::get('/bduss/get', "ApiController@ApiGetBDUSS");
-    Route::post('/bduss/delete', "ApiController@ApiDeleteBDUSS");
-    Route::post('/forums/get', "ApiController@ApiGetForums");
-    Route::post('/forums/update', "ApiController@ApiUpdateForums");
-    Route::get('/sign/record/{bduss_id}/{date}', "ApiController@ApiSignRecord");
-
-    Route::get('/bduss/{bduss_id}/sign', "ApiController@ApiBDUSSSign");
-
-    Route::get('/queue/status/{job_id}', "ApiController@ApiJobStatus");
-    Route::get('/queue/list/{bduss_id}', "ApiController@ApiListJobs");
-    Route::get('/queue/list/{bduss_id}/ongoing', "ApiController@ApiListOngoingJobs");
-
 });
 
 Route::get('/avatar/{username}', function () {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaiduAccount;
+use App\InvitationCode;
 use App\Jobs\SignTieba;
 use App\SignJob;
 use App\SignRecord;
@@ -34,6 +35,43 @@ class ApiController extends Controller
             return redirect()->to("/home");
         } else {
             return redirect()->to("/?msg=用户名或密码错误");
+        }
+    }
+
+    public function register(Request $request)
+    {
+        $username = $request->username;
+        $password = $request->password;
+        $invitation_code = $request->invitation_code;
+
+        $code = InvitationCode::where('code', $invitation_code);
+        if ($code->count()) {
+            if (User::where("name", $username)->count()) {
+                return Response::json([
+                    "success" => false,
+                    "err_msg" => '用户已存在'
+                ]);
+            } else {
+                $user = new User([
+                    "name" => $username,
+                    "email" => $username . '@boar.tech',
+                    "password" => Hash::make($password),
+                    "roles" => "user"
+                ]);
+                $user->save();
+                $code = $code->first();
+                $code->has_used = true;
+                $code->used_user_id = $user->id;
+                $code->save();
+                return Response::json([
+                    "success" => true,
+                ]);
+            }
+        } else {
+            return Response::json([
+                "success" => false,
+                "err_msg" => "邀请码不存在"
+            ]);
         }
     }
 
@@ -309,6 +347,69 @@ class ApiController extends Controller
         ]);
 
 
+    }
+
+    public function ApiInvCodeList()
+    {
+        $codes = InvitationCode::where('apply_user_id', Auth::user()->id)->get();
+        foreach ($codes as $code)
+        {
+            $code->used_user;
+        }
+        return Response::json([
+            'success' => true,
+            'data' => $codes
+        ]);
+    }
+
+    public function ApiInvCodeAdd()
+    {
+        $code = str_random(16);
+
+        if (Auth::user()->roles == "admin") {
+            $inv_code = new InvitationCode([
+                "apply_user_id" => Auth::user()->id,
+                "code" => $code,
+            ]);
+            $inv_code->save();
+            return Response::json([
+                "success" => true,
+                "data" => $inv_code
+            ]);
+        } else {
+            if (InvitationCode::where("apply_user_id", Auth::user()->id)->count() >= config("app.user_max_invitation")) {
+                return Response::json([
+                    "success" => false,
+                    "err_msg" => "邀请码数量已达上限"
+                ]);
+            } else {
+                $inv_code = new InvitationCode([
+                    "apply_user_id" => Auth::user()->id,
+                    "code" => $code,
+                ]);
+                $inv_code->save();
+                return Response::json([
+                    "success" => true,
+                    "data" => $inv_code
+                ]);
+            }
+        }
+    }
+
+    public function ApiInvCodeVerify(Request $request)
+    {
+        $invitation_code = $request->invitation_code;
+        $code = InvitationCode::where("code", $invitation_code);
+        if ($code->count()) {
+            return Response::json([
+                "success" => true,
+                "data" => $code->first()->apply_user->name
+            ]);
+        } else {
+            return Response::json([
+                "success" => false,
+            ]);
+        }
     }
 
 }

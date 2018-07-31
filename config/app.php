@@ -211,4 +211,6 @@ return [
 
     ],
 
+    "user_max_invitation" => env("USER_MAX_INVITATION"),
+
 ];
