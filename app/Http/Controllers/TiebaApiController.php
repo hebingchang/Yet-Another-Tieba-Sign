@@ -62,6 +62,9 @@ class TiebaApiController extends Controller
         );
 
         $response = $this->client->get(self::FAV_URL . "?" . $this->sign($data));
+        if (!isset(json_decode($response->getBody())->forum_list)) {
+            return null;
+        }
         return json_decode($response->getBody())->forum_list;
     }
 

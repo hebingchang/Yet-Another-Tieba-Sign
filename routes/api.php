@@ -44,5 +44,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/baidu/qrcode/poll', "ApiController@ApiBaiduQRPoll");
     Route::post('/baidu/qrcode/bduss', "ApiController@ApiBaiduQRBDUSS");
 
+    Route::get('/dashboard', "ApiController@ApiDashboard");
+
 
 });

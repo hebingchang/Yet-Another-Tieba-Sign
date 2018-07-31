@@ -520,4 +520,40 @@ class ApiController extends Controller
         ]);
     }
 
+    public function ApiDashboard()
+    {
+        $accounts = BaiduAccount::where("user_id", Auth::user()->id)->get();
+        $account_count = $accounts->count();
+        $forums_count = 0;
+        $forums_ids = [];
+        foreach ($accounts as $account) {
+            $forums = UserForum::where('bduss_id', $account->id)->get();
+            $forums_count += $forums->count();
+            foreach ($forums as $forum) {
+                $forums_ids[] = $forum->id;
+            }
+        }
+        $days_count = SignRecord::whereIn("forum_id", $forums_ids)->get()
+            ->groupBy(function($date) {
+                return Carbon::parse($date->created_at)->format('Y-m-d');
+            })->count();
+
+        $added_exp = 0;
+        foreach (SignRecord::whereIn("forum_id", $forums_ids)->get() as $record)
+        {
+            $added_exp += $record->sign_bonus_point;
+        }
+
+        return Response::json([
+            "success" => true,
+            "data" => [
+                "accounts_count" => $account_count,
+                "forums_count" => $forums_count,
+                "days_count" => $days_count,
+                "added_exp" => $added_exp,
+            ]
+        ]);
+
+    }
+
 }
