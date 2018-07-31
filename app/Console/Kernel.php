@@ -2,6 +2,10 @@
 
 namespace App\Console;
 
+use App\BaiduAccount;
+use App\Http\Controllers\ApiController;
+use App\Jobs\SignTieba;
+use App\SignJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,6 +30,13 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->call(function () {
+            $bdusses = BaiduAccount::all();
+            foreach ($bdusses as $bduss) {
+                $api = new ApiController;
+                $api->ApiBDUSSSign($bduss->id);
+            }
+        })->twiceDaily([1, 13]);
     }
 
     /**
