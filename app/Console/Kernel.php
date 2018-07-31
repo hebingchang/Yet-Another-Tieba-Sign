@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
                 $api = new ApiController;
                 $api->ApiBDUSSSign($bduss->id);
             }
-        })->twiceDaily([1, 13]);
+        })->twiceDaily();
     }
 
     /**

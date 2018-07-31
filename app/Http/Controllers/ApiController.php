@@ -10,12 +10,15 @@ use App\SignRecord;
 use App\User;
 use App\UserForum;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Imtigger\LaravelJobStatus\JobStatus;
 use Lcobucci\JWT\Parser;
+use Predis\Response\ResponseInterface;
 
 class ApiController extends Controller
 {
@@ -410,6 +413,111 @@ class ApiController extends Controller
                 "success" => false,
             ]);
         }
+    }
+
+    public function ApiBaiduQR()
+    {
+        $qr_data = json_decode(file_get_contents('https://passport.baidu.com/v2/api/getqrcode?lp=pc&apiver=v3&tpl=tieba'));
+        return Response::json([
+            "success" => true,
+            "data" => $qr_data
+        ]);
+    }
+
+    public function ApiBaiduQRPoll(Request $request)
+    {
+        $sign = $request->sign;
+
+        $client = new Client([
+            // You can set any number of default request options.
+            'timeout'  => 60,
+            'defaults' => [
+                'headers' => [
+                    'Connection' => 'keep-alive',
+                    'Cache-Control' => 'max-age=0',
+                    'Upgrade-Insecure-Requests' => '1',
+                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Encoding' => 'gzip, deflate',
+                    'Accept-Language' => 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
+                    'Referer' => 'tieba.baidu.com'
+                ]
+            ]
+        ]);
+
+        try {
+            $response = $client->get("https://passport.baidu.com/channel/unicast", [
+                "query" => [
+                    "channel_id" => $sign,
+                    "callback" => "",
+                    "tpl" => "tieba",
+                    "apiver" => "v3",
+                    "tt" => time() . '0000',
+                    "_" => time() . '0003'
+                ]
+            ]);
+
+            return Response::json([
+                "success" => true,
+                "data" => json_decode(json_decode(str_replace(")", "", str_replace("(", "", $response->getBody())))->channel_v)
+            ]);
+
+        } catch (\Exception $e) {
+            return Response::json([
+                "success" => false,
+                "err_msg" => $e->getMessage()
+            ]);
+        }
+
+    }
+
+    public function ApiBaiduQRBDUSS(Request $request)
+    {
+        $v = $request->v;
+
+        $client = new Client([
+            // You can set any number of default request options.
+            'timeout'  => 1,
+            'defaults' => [
+                'headers' => [
+                    'Connection' => 'keep-alive',
+                    'Cache-Control' => 'max-age=0',
+                    'Upgrade-Insecure-Requests' => '1',
+                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Encoding' => 'gzip, deflate',
+                    'Accept-Language' => 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
+                    'Referer' => 'tieba.baidu.com'
+                ]
+            ]
+        ]);
+
+        $response = $client->get("https://passport.baidu.com/v3/login/main/qrbdusslogin", [
+            "query" => [
+                "v" => time() . "0000",
+                "bduss" => $v,
+                "u" => "https://pan.baidu.com/disk/home",
+                "loginVersion" => "v4",
+                "qrcode" => "1",
+                "traceid" => "",
+                "apiver" => "v3",
+                "tt" => time() . '0000',
+                "callback" => ""
+            ]
+        ]);
+
+        $cookies = $response->getHeader("Set-Cookie");
+        $bduss = "";
+        foreach ($cookies as $cookie) {
+            if (substr($cookie, 0, 5) == "BDUSS") {
+                $bduss = explode("=", explode(";", $cookie)[0])[1];
+            }
+        }
+
+        return Response::json([
+            "success" => true,
+            "data" => $bduss,
+        ]);
     }
 
 }

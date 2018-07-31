@@ -40,4 +40,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/invitation_code/get', "ApiController@ApiInvCodeList");
     Route::get('/invitation_code/add', "ApiController@ApiInvCodeAdd");
 
+    Route::get('/baidu/qrcode', "ApiController@ApiBaiduQR");
+    Route::post('/baidu/qrcode/poll', "ApiController@ApiBaiduQRPoll");
+    Route::post('/baidu/qrcode/bduss', "ApiController@ApiBaiduQRBDUSS");
+
+
 });
